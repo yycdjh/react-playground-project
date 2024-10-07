@@ -22,7 +22,7 @@ export default function Editor(prop: Props) {
       editor.getAction("editor.action.formatDocument")?.run();
     });
 
-    monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
       jsx: monaco.languages.typescript.JsxEmit.Preserve,
       esModuleInterop: true,
     });
