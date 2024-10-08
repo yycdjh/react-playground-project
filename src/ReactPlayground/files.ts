@@ -26,9 +26,9 @@ export const initFiles: Files = {
   [IMPORT_MAP_FILE_NAME]: {
     name: IMPORT_MAP_FILE_NAME,
     language: fileName2Language(IMPORT_MAP_FILE_NAME),
-    value: JSON.stringify(importMap),
+    value: importMap,
   },
-  AppCss: {
+  "App.css": {
     name: "App.css",
     language: "css",
     value: AppCss,

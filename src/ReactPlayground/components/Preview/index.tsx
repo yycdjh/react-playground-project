@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { PlaygroundContext } from "../../PlaygroundContext";
 import { compile } from "./compiler";
 import Editor from "../CodeEditor/Editor/index";
+import iframeRaw from "./iframe.html?raw";
+import { IMPORT_MAP_FILE_NAME } from "../../files";
 
 export default function Preview() {
   const { files } = useContext(PlaygroundContext);
@@ -11,15 +13,43 @@ export default function Preview() {
     const res = compile(files);
     setCompiledCode(res);
   }, [files]);
+
+  const getIframeUrl = () => {
+    const res = iframeRaw
+      .replace(
+        '<script type="importmap"></script>',
+        `<script type="importmap">${files[IMPORT_MAP_FILE_NAME].value}</script>`
+      )
+      .replace(
+        '<script type="module" id="appSrc"></script>',
+        `<script type="module" id="appSrc">${compiledCode}</script>`
+      );
+    return URL.createObjectURL(new Blob([res], { type: "text/html" }));
+  };
+  const [iframeUrl, setIframeUrl] = useState(getIframeUrl());
+
+  useEffect(() => {
+    setIframeUrl(getIframeUrl());
+  }, [files[IMPORT_MAP_FILE_NAME].value, compiledCode]);
+
   return (
     <div style={{ height: "100%" }}>
-      <Editor
+      <iframe
+        src={iframeUrl}
+        style={{
+          width: "100%",
+          height: "100%",
+          padding: 0,
+          border: "none",
+        }}
+      ></iframe>
+      {/* <Editor
         file={{
           name: "dist.js",
           value: compiledCode,
           language: "javascript",
         }}
-      ></Editor>
+      ></Editor> */}
     </div>
   );
 }
