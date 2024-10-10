@@ -1,9 +1,17 @@
 import { useContext, useEffect, useState } from "react";
 import { PlaygroundContext } from "../../PlaygroundContext";
 import { compile } from "./compiler";
-import Editor from "../CodeEditor/Editor/index";
+// import Editor from "../CodeEditor/Editor/index";
 import iframeRaw from "./iframe.html?raw";
 import { IMPORT_MAP_FILE_NAME } from "../../files";
+import { Message } from "../Message";
+
+interface MessageData {
+  data: {
+    type: string;
+    message: string;
+  };
+}
 
 export default function Preview() {
   const { files } = useContext(PlaygroundContext);
@@ -28,6 +36,24 @@ export default function Preview() {
   };
   const [iframeUrl, setIframeUrl] = useState(getIframeUrl());
 
+  const [error, setError] = useState("");
+
+  const handleMessage = (msg: MessageData) => {
+    const { type, message } = msg.data;
+    console.log(type, "type");
+    console.log(message, "message");
+    if (type === "ERROR") {
+      setError(message);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
+
   useEffect(() => {
     setIframeUrl(getIframeUrl());
   }, [files[IMPORT_MAP_FILE_NAME].value, compiledCode]);
@@ -43,6 +69,7 @@ export default function Preview() {
           border: "none",
         }}
       ></iframe>
+      <Message type="error" content={error}></Message>
       {/* <Editor
         file={{
           name: "dist.js",
