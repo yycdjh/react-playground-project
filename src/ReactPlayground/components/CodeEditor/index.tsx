@@ -11,7 +11,7 @@ export default function CodeEditor() {
   //   language: "typescript",
   // };
 
-  const { files, setFiles, selectedFileName, setSelectedFileName } =
+  const { theme, files, setFiles, selectedFileName, setSelectedFileName } =
     useContext(PlaygroundContext);
 
   const file = files[selectedFileName];
@@ -26,7 +26,13 @@ export default function CodeEditor() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <FileNameList></FileNameList>
-      <Editor file={file} onChange={debounce(onEditorChange, 500)}></Editor>
+      <Editor
+        file={file}
+        onChange={debounce(onEditorChange, 500)}
+        options={{
+          theme: `vs-${theme}`,
+        }}
+      ></Editor>
     </div>
   );
 }
